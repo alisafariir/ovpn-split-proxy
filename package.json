@@ -40,7 +40,7 @@
       "allowToChangeInstallationDirectory": false
     },
     "portable": {
-      "requestedExecutionLevel": "requireAdministrator"
+      "requestExecutionLevel": "requireAdministrator"
     }
   }
 }
