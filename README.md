@@ -40,9 +40,9 @@ OSP is a graphical interface for OpenVPN that lets you:
 
 **OpenVPN must be available on your Windows system.** OSP only launches and controls OpenVPN; it does not implement the VPN protocol.
 
-- If you **don’t have OpenVPN installed**, download and install it from the official site:  
+- **Option 1:** Download and install OpenVPN from the official site:  
   **[https://openvpn.net/community-downloads/](https://openvpn.net/community-downloads/)**
-- Or place **openvpn.exe** in the project **`bin/`** folder; OSP will use it from there if present.
+- **Option 2:** Download and install from this repo: get **`bin/OpenVPN.msi`** (or **`bin/openVPN.msi`**) from the repository and run the installer. OSP will use OpenVPN from your system, or from the **`bin/`** folder if **openvpn.exe** is placed there.
 
 Setup, run, and build details: **DEVELOP.md**.  
 
