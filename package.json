@@ -31,8 +31,7 @@
     "win": {
       "target": ["portable", "nsis"],
       "requestedExecutionLevel": "requireAdministrator",
-      "publisherName": "OSP",
-      "icon": "assets/icons/icon.ico"
+      "publisherName": "OSP"
     },
     "nsis": {
       "oneClick": true,
