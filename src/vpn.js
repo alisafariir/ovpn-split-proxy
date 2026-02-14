@@ -26,7 +26,7 @@ function startVpn(openvpnPath, args, onLog, options) {
   const child = execa(openvpnPath, args, spawnOpts);
 
   let assignedIp = null;
-  const ifconfigRe = /ifconfig\s+(\d+\.\d+\.\d+\.\d+)\s/;
+  const ifconfigRe = /ifconfig[,\s]+(\d+\.\d+\.\d+\.\d+)/;
 
   let resolveConnected;
   let didResolve = false;
@@ -42,21 +42,17 @@ function startVpn(openvpnPath, args, onLog, options) {
       reject(new Error('VPN connection timeout (no "Initialization Sequence Completed" within 120s)'));
     }, 120000);
 
-    function onLine(line) {
+    const shouldLog = (line) =>
+      line.includes('ERROR') || line.includes('WARNING') ||
+      line.includes('Initialization') || line.includes('Peer Connection') ||
+      line.includes('PUSH_REPLY') || line.includes('TLS:') || line.includes('VERIFY ');
+    function handleLine(line) {
       const m = line.match(ifconfigRe);
       if (m) assignedIp = m[1];
       if (line.includes(CONNECTED_MARKER)) {
         clearTimeout(timeout);
         resolveConnected();
       }
-    }
-
-    const shouldLog = (line) =>
-      line.includes('ERROR') || line.includes('WARNING') ||
-      line.includes('Initialization') || line.includes('Peer Connection') ||
-      line.includes('PUSH_REPLY') || line.includes('TLS:') || line.includes('VERIFY ');
-    function handleLine(line) {
-      onLine(line);
       if (shouldLog(line)) log('info', line);
     }
     child.stdout.on('data', (chunk) => {

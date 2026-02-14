@@ -193,6 +193,7 @@
     .checkbox-wrap input { cursor: pointer; accent-color: var(--accent); }
     .checkbox-wrap:hover { color: var(--text); }
     .mode-label { font-size: 13px; color: var(--text-muted); margin-right: 8px; }
+    .mode-hint { font-size: 11px; color: var(--text-muted); margin: 4px 0 0 0; padding: 0; line-height: 1.35; }
     .radio-wrap {
       display: inline-flex;
       align-items: center;
@@ -279,12 +280,15 @@
           <span class="mode-label">Mode:</span>
           <label class="radio-wrap">
             <input type="radio" name="mode" value="proxy" id="modeProxy" checked>
-            <span>Proxy</span>
+            <span>Proxy Mode</span>
           </label>
           <label class="radio-wrap">
             <input type="radio" name="mode" value="system" id="modeSystem">
-            <span>System</span>
+            <span>System Mode</span>
           </label>
+        </div>
+        <div class="toolbar-row">
+          <p class="mode-hint">Proxy Mode = only TCP via SOCKS5 127.0.0.1:1080 uses VPN. System Mode = full tunnel, entire system via VPN.</p>
         </div>
         <div class="toolbar-row toolbar-row--startup">
           <label class="checkbox-wrap">

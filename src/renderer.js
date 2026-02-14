@@ -118,8 +118,7 @@ function persistCurrentCreds() {
   });
 }
 
-btnImport.addEventListener('click', async () => {
-  const path = await window.ovpn.openFileDialog();
+async function importOvpnPath(path) {
   if (!path) return;
   const result = await window.ovpn.configImport(path);
   if (!result.ok) {
@@ -128,6 +127,23 @@ btnImport.addEventListener('click', async () => {
   }
   await loadConfigs();
   selectConfig(result.config.id);
+}
+
+btnImport.addEventListener('click', async () => {
+  const path = await window.ovpn.openFileDialog();
+  await importOvpnPath(path);
+});
+
+document.body.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  if (e.dataTransfer.types.includes('Files')) e.dataTransfer.dropEffect = 'copy';
+});
+document.body.addEventListener('drop', async (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.name.toLowerCase().endsWith('.ovpn')) return;
+  const path = window.ovpn.getPathForFile(file);
+  await importOvpnPath(path);
 });
 
 displayName.addEventListener('blur', persistCurrentCreds);

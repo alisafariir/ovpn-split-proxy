@@ -10,26 +10,46 @@
     "build": "electron-builder --win",
     "build:portable": "electron-builder --win --config.win.target=portable",
     "build:dir": "electron-builder --win --config.win.target=dir",
-    "test": "node -e \"require('./src/utils'); console.log('ok')\""
+    "test": "node -e \"require('./src/utils'); console.log('ok')\"",
+    "install-split-tools": "node scripts/install-split-tools.js"
   },
-  "keywords": ["openvpn", "socks5", "windows", "vpn", "electron"],
+  "keywords": [
+    "openvpn",
+    "socks5",
+    "windows",
+    "vpn",
+    "electron"
+  ],
   "license": "MIT",
-  "engines": { "node": ">=14.0.0" },
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "dependencies": {
     "chalk": "^4.1.2",
     "execa": "^5.1.1"
   },
   "devDependencies": {
     "electron": "^28.0.0",
-    "electron-builder": "^24.9.1"
+    "electron-builder": "^24.9.1",
+    "extract-zip": "^2.0.1"
   },
   "build": {
     "appId": "com.osp.app",
     "productName": "OSP",
-    "directories": { "output": "dist" },
-    "files": ["main.js", "src/**", "assets/**", "bin/**"],
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "src/**",
+      "assets/**",
+      "bin/**"
+    ],
     "win": {
-      "target": ["portable", "nsis"],
+      "target": [
+        "portable",
+        "nsis"
+      ],
       "requestedExecutionLevel": "requireAdministrator",
       "publisherName": "OSP"
     },

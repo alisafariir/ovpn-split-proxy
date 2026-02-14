@@ -6,6 +6,17 @@ const fs = require('fs');
 const os = require('os');
 const { execSync } = require('child_process');
 
+// Avoid "Unable to move the cache: Access is denied" on Windows (run before ready)
+if (process.platform === 'win32') {
+  const cacheDir = path.join(os.tmpdir(), 'osp-electron-cache-' + (process.env.USERNAME || 'default'));
+  try {
+    if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+    app.commandLine.appendSwitch('disk-cache-dir', cacheDir);
+    app.commandLine.appendSwitch('gpu-cache-dir', path.join(cacheDir, 'gpu'));
+  } catch (_) {}
+  app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
+}
+
 /** On Windows, true if process has Administrator rights. */
 function isWindowsAdmin() {
   if (process.platform !== 'win32') return true;
@@ -333,9 +344,7 @@ ipcMain.handle('vpn-start', async (_, { configPath, username, password, mode }) 
   const configDir = path.dirname(configForOpenVpn);
   const args = ['--config', configForOpenVpn];
   const vpnMode = mode === 'proxy' ? 'proxy' : 'system';
-  if (vpnMode === 'proxy') {
-    args.push('--pull-filter', 'ignore', 'redirect-gateway');
-  }
+
   if (username !== undefined && String(username).trim() !== '' && password !== undefined) {
     authFilePath = path.join(os.tmpdir(), 'ovpn-split-auth-' + Date.now() + '.txt');
     fs.writeFileSync(authFilePath, String(username).trim() + '\n' + password, 'utf8');
@@ -356,13 +365,10 @@ ipcMain.handle('vpn-start', async (_, { configPath, username, password, mode }) 
 
     await result.connected;
     sendLog('success', 'VPN connected.');
-    const socksOpts = { host: '127.0.0.1', port: 1080 };
-    if (vpnMode === 'proxy') {
-      const vpnIp = result.getAssignedIp && result.getAssignedIp();
-      if (vpnIp) socksOpts.localAddress = vpnIp;
-    }
-    socksServer = createSocks5Server(socksOpts, onLog);
-    sendLog('success', vpnMode === 'proxy' ? 'SOCKS5: 127.0.0.1:1080 (proxy only)' : 'SOCKS5: 127.0.0.1:1080 (system)');
+
+    socksServer = createSocks5Server({ host: '127.0.0.1', port: 1080 }, onLog);
+    sendLog('success', 'SOCKS5: 127.0.0.1:1080 — all traffic via VPN');
+
     if (Notification.isSupported()) {
       new Notification({ title: 'OSP', body: 'VPN connected. SOCKS5: 127.0.0.1:1080' }).show();
     }
